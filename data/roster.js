@@ -202,7 +202,7 @@ window.ROSTER = [
   {"group":"FRAME THE X","img":"3_画像2/200.jpg","name":"ATO","no":200},
   {"group":"FRAME THE X","img":"4_画像3/201.jpg","name":"ROA","no":201},
   {"group":"FRAME THE X","img":"4_画像3/202.jpg","name":"IRANG","no":202},
-  {"group":"GENUS","img":"4_画像3/203.jpg","name":"セハ","no":203},
+  {"group":"GENUS","img":"4_画像3/203.jpg","name":"ソハ","no":203},
   {"group":"GENUS","img":"4_画像3/204.jpg","name":"チャンヨン","no":204},
   {"group":"GENUS","img":"4_画像3/205.jpg","name":"チェフン","no":205},
   {"group":"GENUS","img":"4_画像3/206.jpg","name":"ジェヨン","no":206},
