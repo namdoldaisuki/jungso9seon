@@ -64,7 +64,7 @@ window.TEXTS = {
   // ----- 結果 -----
   resultTitle: "中小好き顔{n}選",
   resultRank: "{rank}位",
-  collageLink: "保存・シェア用,
+  collageLink: "保存・シェア用",
   adjustButton: "順位を調整する",
   resultRestartConfirm: "結果を消して、最初からやり直しますか？",
 
