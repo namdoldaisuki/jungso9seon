@@ -7,12 +7,12 @@
 //  ・\n は確認ダイアログ（OK/キャンセルの小窓）の中での改行です
 window.TEXTS = {
   // ----- サイト全体 -----
-  title: "中小好き顔9選",                    // サイトのタイトル
-  shareText: "私の中小好き顔9選！",                   // ツイートの文章
-  hashtags: "",                                 // ハッシュタグ（#なし・カンマ区切り）例: "推し9選,ランキング"
+  title: "中小ナムドル好き顔9選",                    // サイトのタイトル
+  shareText: "中小ナムドル好き顔9選",                   // ツイートの文章
+  hashtags: "中小ナムドル好き顔9選",                                 // ハッシュタグ（#なし・カンマ区切り）例: "推し9選,ランキング"
 
   // ----- トップ画面 -----
-  introTitle: "{total}人から推し{n}人を選ぼう",
+  introTitle: "{total}人から好き顔{n}人を選ぼう",
   introSteps: [
     "<b>Step1</b>：気になる人をタップ（何人でもOK・スキップOK）",
     "<b>Step2</b>：残った人の中から、{n}人以下になるまで絞り込む",
@@ -32,7 +32,7 @@ window.TEXTS = {
   mainIntro: "残りは <b>{total}人</b>。<br><b>{n}人以下</b>になるまで絞り込みます。",
   mainIntroNote: "このラウンドで選んだ人が{n}人以下なら決勝へ。まだ多ければ、選んだ人でもう1ラウンド行います。",
   roundStartButton: "スタート",
-  prelimHint: "気になる人をタップ（何人でも・0人でもOK）",
+  prelimHint: "好き顔をタップ（何人でもOK・スキップOK）",
   mainHint: "{n}人以下に絞り込もう",
   groupHeading: "グループ {i} / {groups}",
   prelimCount: "選択中 {count}人",
@@ -48,7 +48,7 @@ window.TEXTS = {
 
   // ----- 決勝 -----
   finalIntroTitle: "Step3進出 {count}人！",
-  finalIntroText: "2人ずつ表示されるので、<b>上の順位にしたい方</b>をタップしてください。",
+  finalIntroText: "2人ずつ表示されるので、<b>より好きな顔</b>をタップしてください。",
   finalIntroNote: "最大{max}問で順位が決まります。間違えたら「ひとつ戻る」でやり直せます。",
   finalStartButton: "Step3スタート",
   finalQuestionTitle: "Step3　第{q}問",
@@ -64,7 +64,7 @@ window.TEXTS = {
   // ----- 結果 -----
   resultTitle: "中小好き顔{n}選",
   resultRank: "{rank}位",
-  collageLink: "コラージュ画像を開く（保存・シェア用）",
+  collageLink: "保存・シェア用,
   adjustButton: "順位を調整する",
   resultRestartConfirm: "結果を消して、最初からやり直しますか？",
 
