@@ -174,8 +174,8 @@
         <button class="btn" id="restart">${t("restartButton")}</button>
       </div>`;
     app.querySelector("#cont").onclick = () => { showResume = false; render(); };
-    app.querySelector("#restart").onclick = () => {
-      if (!confirm(t("restartConfirm"))) return;
+    app.querySelector("#restart").onclick = async () => {
+      if (!(await showConfirm(t("restartConfirm")))) return;
       showResume = false;
       reset();
       render();
@@ -246,19 +246,19 @@
     };
   }
 
-  function finishRound() {
+  async function finishRound() {
     const sel = new Set(state.selected);
     const passed = state.pool.filter(no => sel.has(no));
     if (passed.length === 0) {
-      alert(t("noneSelectedAlert"));
+      await showAlert(t("noneSelectedAlert"));
       return;
     }
     if (state.round > 0 && passed.length === state.pool.length && passed.length > N) {
-      alert(t("allSelectedAlert", { n: N }));
+      await showAlert(t("allSelectedAlert", { n: N }));
       return;
     }
     const vars = { round: roundLabel(state.round), count: passed.length, next: state.round + 1 };
-    if (!confirm(passed.length <= N ? t("toFinalConfirm", vars) : t("toNextRoundConfirm", vars))) return;
+    if (!(await showConfirm(passed.length <= N ? t("toFinalConfirm", vars) : t("toNextRoundConfirm", vars)))) return;
     if (passed.length <= N) goFinal(passed);
     else goRound(state.round + 1, shuffle(passed));
     render();
@@ -348,7 +348,7 @@
       const p = byNo.get(o[i]);
       cells.push(p
         ? `<div class="cell">${p.img ? `<img src="${esc(p.img)}" alt="${esc(p.name)}">` : ""}
-             <span class="rk">${i + 1}</span>${p.group ? `<span class="gp">${esc(p.group)}</span>` : ""}</div>`
+             <span class="rk">${i + 1}</span><span class="gp">${p.group ? `<small>${esc(p.group)}</small>` : ""}<small>${esc(p.name)}</small></span></div>`
         : `<div class="cell empty"></div>`);
     }
     app.innerHTML = `
@@ -366,8 +366,8 @@
         <button class="btn small" id="restart">${t("restartButton")}</button>
       </div>`;
     app.querySelector("#adjust").onclick = () => { state.phase = "adjust"; save(); render(); };
-    app.querySelector("#restart").onclick = () => {
-      if (!confirm(t("resultRestartConfirm"))) return;
+    app.querySelector("#restart").onclick = async () => {
+      if (!(await showConfirm(t("resultRestartConfirm")))) return;
       reset();
       render();
     };

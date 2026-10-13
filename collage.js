@@ -73,7 +73,7 @@
       try {
         await navigator.share({ files: [file], text: T.shareText });
       } catch (e) {
-        if (e.name !== "AbortError") alert(T.shareFailed);
+        if (e.name !== "AbortError") showAlert(T.shareFailed);
       }
     };
   }
