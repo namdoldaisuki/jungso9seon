@@ -206,14 +206,15 @@
       <div class="gauge">
         <div class="gauge-label"><b>${roundLabel(round)}</b><span>${t("groupHeading", { i: gi + 1, groups: groups.length })}</span></div>
         <div class="progress"><div style="width:${((gi + 1) / groups.length) * 100}%"></div></div>
+        <div class="count" id="count"></div>
       </div>
       <p class="muted">${round === 0 ? t("prelimHint") : t("mainHint", { n: N })}</p>
       <div class="grid">${groups[gi].map(no => card(byNo.get(no), sel.has(no))).join("")}</div>
-      <div class="bottombar"><div class="inner">
-        <button class="btn small" id="prev" ${gi === 0 ? "disabled" : ""}>${t("prevButton")}</button>
-        <div class="count" id="count"></div>
-        <button class="btn primary small" id="next">${last ? finishLabel : t("nextButton")}</button>
-      </div></div>`;
+      <!-- 「次へ」は一番下に置く（画面の下に固定すると、スクロールせずに進んで下の段の人を見逃すため） -->
+      <div class="pager">
+        <button class="btn" id="prev" ${gi === 0 ? "disabled" : ""}>${t("prevButton")}</button>
+        <button class="btn primary" id="next">${last ? finishLabel : t("nextButton")}</button>
+      </div>`;
 
     const countEl = app.querySelector("#count");
     const updateCount = () => {

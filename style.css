@@ -199,3 +199,10 @@ h2 { font-size: 1.3rem; margin: 8px 0; }
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   font-size: clamp(.6rem, 2.4vw, .82rem);
 }
+
+/* 予選・本選：選んだ人数はゲージの下に、「前へ／次へ」はグループの一番下に */
+.gauge .count { font-size: .85rem; padding-bottom: 6px; }
+.pager { display: flex; justify-content: space-between; gap: 12px; margin: 20px 0 8px; }
+.pager .btn { flex: 1; }
+/* スマホでの素早い2回タップで画面が拡大されたり、選択が2回切り替わったりしないように */
+.card, .btn { touch-action: manipulation; }
