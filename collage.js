@@ -60,8 +60,11 @@
   $("actions").hidden = false;
   $("note").hidden = false;
 
+  // サイトのトップページのURL（ツイートに付けるリンク）
+  const siteUrl = new URL("./", location.href).href;
   const tweet = new URL("https://twitter.com/intent/tweet");
   tweet.searchParams.set("text", T.shareText);
+  tweet.searchParams.set("url", siteUrl);
   if (T.hashtags) tweet.searchParams.set("hashtags", T.hashtags);
   $("tweet").href = tweet.toString();
 
@@ -71,7 +74,10 @@
     $("share").hidden = false;
     $("share").onclick = async () => {
       try {
-        await navigator.share({ files: [file], text: T.shareText });
+        // アプリによっては url を落とすので、文章の中にリンクとハッシュタグを入れておく
+        const tags = (T.hashtags || "").split(",").map(s => s.trim()).filter(Boolean).map(s => "#" + s).join(" ");
+        const text = [T.shareText, tags, siteUrl].filter(Boolean).join("\n");
+        await navigator.share({ files: [file], text });
       } catch (e) {
         if (e.name !== "AbortError") showAlert(T.shareFailed);
       }
