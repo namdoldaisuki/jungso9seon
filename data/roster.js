@@ -413,8 +413,6 @@ window.ROSTER = [
   {"group":"THE BOYZ","img":"6_画像5/411.jpg","name":"ソヌ","no":411},
   {"group":"THE BOYZ","img":"6_画像5/412.jpg","name":"エリック","no":412},
   {"group":"THE BOYZ","img":"6_画像5/413.jpg","name":"ファル","no":413},
-  {"group":"THE BOYZ","img":"6_画像5/414.jpg","name":"チュハンニョン","no":414},
-  {"group":"THE BOYZ","img":"6_画像5/415.jpg","name":"ニュー","no":415},
   {"group":"The Wind","img":"6_画像5/416.jpg","name":"キムヒス","no":416},
   {"group":"The Wind","img":"6_画像5/417.jpg","name":"タナトーン","no":417},
   {"group":"The Wind","img":"6_画像5/418.jpg","name":"チェハンビン","no":418},
