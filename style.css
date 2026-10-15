@@ -206,3 +206,9 @@ h2 { font-size: 1.3rem; margin: 8px 0; }
 .pager .btn { flex: 1; }
 /* スマホでの素早い2回タップで画面が拡大されたり、選択が2回切り替わったりしないように */
 .card, .btn { touch-action: manipulation; }
+
+/* トップ画面：遊び方を選ぶ */
+.top-lead { font-weight: 700; font-size: 1.05rem; margin: 8px 0 4px; }
+.mode-choice h2 { margin-top: 0; }
+.mode-choice .btn { width: 100%; }
+.resume-note { color: var(--accent); font-size: .85rem; font-weight: 700; margin: 0 0 8px; }
