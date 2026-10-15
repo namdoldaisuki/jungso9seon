@@ -84,7 +84,7 @@ window.TEXTS = {
   collageFailed: "画像の作成に失敗しました。",
   shareButton: "画像をシェアする",
   saveButton: "画像を保存",
-  tweetButton: "Xで投稿する",
+  tweetButton: "Xで投稿する(画像は投稿されません。セルフで貼ってください！)",
   collageNote: "スマホは画像を長押しでも保存できます。<br>「Xで投稿する」では画像は自動で付かないので、保存した画像を添付してください。",
   shareFailed: "シェアできませんでした。画像を保存してから投稿してください。",
 
@@ -95,15 +95,15 @@ window.TEXTS = {
     introSteps: [
       "<b>Step1</b>：気になる人をタップ（何人でもOK・スキップOK）",
       "<b>Step2</b>：選んだ人を2人ずつ比べて、好きな顔を選ぶと順位が決まります",
-      "<b>結果</b>：上位9人を3×3で発表！保存用の画像は9・16・25選から選べます",
+      "<b>結果</b>：上位9人を発表！",
     ],
-    introNote: "選んだ人数が多いほど2択の問題数が増えます（25人で最大約95問、50人で最大約240問）。",
+    introNote: "選んだ人数が多いほど2択の問題数が増えます。",
     prelimHint: "ランキングに入れたい人をタップ（何人でもOK・スキップOK）",
     toFinalConfirm: "{count}人を選びました。Step2の2択で順位を決めます（最大{max}問）。\nよろしいですか？",
-    finalIntroTitle: "{count}人の順位を決めよう！",
+    finalIntroTitle: "{count}人の順位を決めましょう♪",
     finalStartButton: "Step2スタート",
     finalQuestionTitle: "Step2　第{q}問",
-    resultTitle: "わたしの好き顔ランキング",
+    resultTitle: "中小ナムドル好き顔9選",
     collageLink: "{n}選の画像を開く",
   },
 };
