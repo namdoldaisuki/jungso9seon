@@ -16,7 +16,7 @@ window.TEXTS = {
   quickModeLabel: "忙しい人向け",
   quickModeDesc: "{n}人以下に絞ってから2択で順位を決めます（2択は最大20問ほど）",
   longModeLabel: "時間がある人向け",
-  longModeDesc: "選んだ人全員を2択でランキング。9・16・25選の画像が作れます",
+  longModeDesc: "選んだ人全員を2択でランキング。",
   topStartButton: "始める",
   topResumeNote: "途中から再開できます",
   backButton: "← 戻る",
