@@ -1,6 +1,9 @@
 (async () => {
   const byNo = new Map((window.ROSTER || []).map(p => [p.no, p]));
-  const TILE = 400; // 1マスの大きさ(px)。全体は 1200×1200
+  const params = new URLSearchParams(location.search);
+  // size=3/4/5 で 3×3・4×4・5×5（9・16・25選）。全体はいつも 1200×1200
+  const SIZE = Math.min(5, Math.max(3, Number(params.get("size")) || 3));
+  const TILE = 1200 / SIZE;
   const $ = id => document.getElementById(id);
 
   const T = window.TEXTS;
@@ -13,8 +16,8 @@
   $("tweet").textContent = T.tweetButton;
   $("note").innerHTML = T.collageNote;
 
-  const ids = (new URLSearchParams(location.search).get("ids") || "")
-    .split(",").map(Number).filter(n => byNo.has(n)).slice(0, 9);
+  const ids = (params.get("ids") || "")
+    .split(",").map(Number).filter(n => byNo.has(n)).slice(0, SIZE * SIZE);
   if (!ids.length) {
     $("status").textContent = T.collageNoData;
     return;
@@ -23,20 +26,22 @@
   const loadImage = src => new Promise(resolve => {
     if (!src) return resolve(null);
     const img = new Image();
+    // 写真が別の場所から来ても（下書きのプレビューなど）画像を作れるようにする
+    img.crossOrigin = "anonymous";
     img.onload = () => resolve(img);
     img.onerror = () => resolve(null);
     img.src = src;
   });
 
   const canvas = document.createElement("canvas");
-  canvas.width = canvas.height = TILE * 3;
+  canvas.width = canvas.height = TILE * SIZE;
   const ctx = canvas.getContext("2d");
   ctx.fillStyle = "#ffffff";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   const images = await Promise.all(ids.map(no => loadImage(byNo.get(no).img)));
   images.forEach((img, i) => {
-    const x = (i % 3) * TILE, y = Math.floor(i / 3) * TILE;
+    const x = (i % SIZE) * TILE, y = Math.floor(i / SIZE) * TILE;
     if (!img) {
       ctx.fillStyle = "#d9d4cf";
       ctx.fillRect(x, y, TILE, TILE);
@@ -47,7 +52,10 @@
     ctx.drawImage(img, (img.naturalWidth - s) / 2, (img.naturalHeight - s) / 2, s, s, x, y, TILE, TILE);
   });
 
-  const blob = await new Promise(r => canvas.toBlob(r, "image/jpeg", 0.92));
+  let blob = null;
+  try {
+    blob = await new Promise(r => canvas.toBlob(r, "image/jpeg", 0.92));
+  } catch (e) {} // 作れなかったときは下の「失敗しました」を出す
   if (!blob) {
     $("status").textContent = T.collageFailed;
     return;

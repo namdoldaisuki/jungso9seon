@@ -4,7 +4,10 @@
   const t = window.t;
   const ROSTER = window.ROSTER || [];
   const byNo = new Map(ROSTER.map(p => [p.no, p]));
-  const STORE_KEY = "rank9-state-v3";
+  // 遊び方は2つ。途中経過はそれぞれ別に保存する
+  //   nine: Step1→Step2で9人以下に絞る→Step3の2択で順位（9選）
+  //   rank: Step1で選んだ全員を、Step2の2択で順位付け（2択ランキングモード）
+  const STORE_KEYS = { nine: "rank9-state-v3", rank: "rank9-rank-v1" };
   // 名簿が変わったら古い途中データは使わない
   const ROSTER_SIG = ROSTER.length + "-" + ROSTER.reduce((a, p) => a + p.no, 0);
   const N = CFG.finalCount;
@@ -14,24 +17,28 @@
   document.getElementById("appTitle").textContent = T.title;
 
   // ---------- 保存 ----------
-  function load() {
+  function load(m) {
     try {
-      const s = JSON.parse(localStorage.getItem(STORE_KEY));
+      const s = JSON.parse(localStorage.getItem(STORE_KEYS[m]));
       if (s && s.rosterSig === ROSTER_SIG) return s;
     } catch (e) {}
     return { phase: "intro" };
   }
   function save() {
     state.rosterSig = ROSTER_SIG;
-    try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (e) {}
+    try { localStorage.setItem(STORE_KEYS[mode], JSON.stringify(state)); } catch (e) {}
   }
   function reset() {
     state = { phase: "intro" };
     save();
   }
 
-  let state = load();
-  let showResume = state.phase !== "intro";
+  let mode = "nine";
+  let state = { phase: "intro" }; // 開いたときは必ずトップ画面から
+
+  // 文言：2択ランキングモードのときは texts.js の rankMode にあるものを優先する
+  const tt = (key, vars) =>
+    mode === "rank" && T.rankMode && T.rankMode[key] != null ? fill(T.rankMode[key], vars) : t(key, vars);
 
   // ---------- 小物 ----------
   const esc = s => String(s ?? "").replace(/[&<>"']/g, c =>
@@ -140,7 +147,6 @@
       app.innerHTML = `<div class="panel">名簿データが読み込めませんでした。</div>`;
       return;
     }
-    if (showResume) return renderResume();
     ({
       intro: renderIntro,
       roundIntro: renderRoundIntro,
@@ -152,45 +158,70 @@
     }[state.phase] || renderIntro)();
   }
 
+  // トップ画面：「忙しい人向け（9選）」と「時間がある人向け（2択ランキング）」を選ぶだけ
+  // 「始める」を押すと、そのモードの説明ページへ
+  let explainMode = null;
   function renderIntro() {
+    if (explainMode) return renderExplain(explainMode);
+    const tv = { total: ROSTER.length, n: N };
+    const choice = (m, label, desc) => `
+      <div class="panel mode-choice">
+        <h2>${label}</h2>
+        <p class="muted">${desc}</p>
+        ${load(m).phase !== "intro" ? `<p class="resume-note">${t("topResumeNote")}</p>` : ""}
+        <button class="btn primary" data-open="${m}">${t("topStartButton")}</button>
+      </div>`;
     app.innerHTML = `
-      <h2>${t("introTitle", { total: ROSTER.length, n: N })}</h2>
-      <div class="panel">
-        <ol class="steps">${T.introSteps.map(s => `<li>${fill(s, { n: N })}</li>`).join("")}</ol>
-        <p class="muted">${t("introNote")}</p>
-      </div>
-      <button class="btn primary" id="start">${t("startButton")}</button>`;
-    app.querySelector("#start").onclick = () => {
-      goRound(0, ROSTER.map(p => p.no));
+      ${T.topLead ? `<p class="top-lead">${fill(T.topLead, { total: ROSTER.length, n: N })}</p>` : ""}
+      ${choice("nine", t("quickModeLabel", tv), t("quickModeDesc", tv))}
+      ${T.rankMode ? choice("rank", t("longModeLabel", tv), t("longModeDesc", tv)) : ""}`;
+    app.querySelectorAll("[data-open]").forEach(b => (b.onclick = () => {
+      explainMode = b.dataset.open;
       render();
-    };
+    }));
   }
 
-  function renderResume() {
+  // モードの説明ページ。途中のものは「続きから／最初からやり直す」を出す
+  function renderExplain(m) {
+    mode = m;
+    const vars = { total: ROSTER.length, n: N };
+    const src = m === "rank" ? T.rankMode : T;
+    const inProgress = load(m).phase !== "intro";
     app.innerHTML = `
-      <h2>${t("resumeTitle")}</h2>
-      <div class="stack">
-        <button class="btn primary" id="cont">${t("resumeButton")}</button>
-        <button class="btn" id="restart">${t("restartButton")}</button>
-      </div>`;
-    app.querySelector("#cont").onclick = () => { showResume = false; render(); };
-    app.querySelector("#restart").onclick = async () => {
+      <h2>${fill(src.introTitle, vars)}</h2>
+      <div class="panel">
+        <ol class="steps">${src.introSteps.map(s => `<li>${fill(s, vars)}</li>`).join("")}</ol>
+        ${m === "rank" && src.introNote ? `<p class="muted">${fill(src.introNote, vars)}</p>` : ""}
+        <p class="muted">${t("introNote")}</p>
+      </div>
+      ${inProgress
+        ? `<div class="stack">
+             <button class="btn primary" id="cont">${t("resumeButton")}</button>
+             <button class="btn" id="restart">${t("restartButton")}</button>
+           </div>`
+        : `<button class="btn primary" id="start">${t("startButton")}</button>`}
+      <p><button class="btn small" id="back">${t("backButton")}</button></p>`;
+
+    const begin = () => { explainMode = null; goRound(0, ROSTER.map(p => p.no)); render(); };
+    const $ = s => app.querySelector(s);
+    if ($("#start")) $("#start").onclick = begin;
+    if ($("#cont")) $("#cont").onclick = () => { explainMode = null; state = load(m); render(); };
+    if ($("#restart")) $("#restart").onclick = async () => {
       if (!(await showConfirm(t("restartConfirm")))) return;
-      showResume = false;
-      reset();
-      render();
+      begin();
     };
+    $("#back").onclick = () => { explainMode = null; render(); };
   }
 
   function renderRoundIntro() {
     const vars = { total: state.pool.length, groups: state.groups.length, n: N };
     const body = state.round === 0
-      ? `<p>${t("prelimIntro", vars)}</p>`
-      : `<p>${t("mainIntro", vars)}</p><p class="muted">${t("mainIntroNote", vars)}</p>`;
+      ? `<p>${tt("prelimIntro", vars)}</p>`
+      : `<p>${tt("mainIntro", vars)}</p><p class="muted">${tt("mainIntroNote", vars)}</p>`;
     app.innerHTML = `
       <h2>${roundLabel(state.round)}</h2>
       <div class="panel">${body}</div>
-      <button class="btn primary" id="go">${t("roundStartButton")}</button>`;
+      <button class="btn primary" id="go">${tt("roundStartButton")}</button>`;
     app.querySelector("#go").onclick = () => { state.phase = "round"; save(); render(); };
   }
 
@@ -200,30 +231,30 @@
     const gi = Math.min(state.groupIndex || 0, groups.length - 1);
     const sel = new Set(state.selected);
     const last = gi === groups.length - 1;
-    const finishLabel = round === 0 ? t("prelimFinishButton") : t("mainFinishButton");
+    const finishLabel = round === 0 ? tt("prelimFinishButton") : tt("mainFinishButton");
 
     app.innerHTML = `
       <div class="gauge">
-        <div class="gauge-label"><b>${roundLabel(round)}</b><span>${t("groupHeading", { i: gi + 1, groups: groups.length })}</span></div>
+        <div class="gauge-label"><b>${roundLabel(round)}</b><span>${tt("groupHeading", { i: gi + 1, groups: groups.length })}</span></div>
         <div class="progress"><div style="width:${((gi + 1) / groups.length) * 100}%"></div></div>
         <div class="count" id="count"></div>
       </div>
-      <p class="muted">${round === 0 ? t("prelimHint") : t("mainHint", { n: N })}</p>
+      <p class="muted">${round === 0 ? tt("prelimHint") : tt("mainHint", { n: N })}</p>
       <div class="grid">${groups[gi].map(no => card(byNo.get(no), sel.has(no))).join("")}</div>
       <!-- 「次へ」は一番下に置く（画面の下に固定すると、スクロールせずに進んで下の段の人を見逃すため） -->
       <div class="pager">
-        <button class="btn" id="prev" ${gi === 0 ? "disabled" : ""}>${t("prevButton")}</button>
-        <button class="btn primary" id="next">${last ? finishLabel : t("nextButton")}</button>
+        <button class="btn" id="prev" ${gi === 0 ? "disabled" : ""}>${tt("prevButton")}</button>
+        <button class="btn primary" id="next">${last ? finishLabel : tt("nextButton")}</button>
       </div>`;
 
     const countEl = app.querySelector("#count");
     const updateCount = () => {
       const n = state.selected.length;
       if (round === 0) {
-        countEl.innerHTML = t("prelimCount", { count: `<b>${n}</b>` });
+        countEl.innerHTML = tt("prelimCount", { count: `<b>${n}</b>` });
       } else {
         const cls = n <= N ? "ok" : "over";
-        countEl.innerHTML = t("mainCount", { count: `<span class="${cls}">${n}</span>`, n: N });
+        countEl.innerHTML = tt("mainCount", { count: `<span class="${cls}">${n}</span>`, n: N });
       }
     };
     updateCount();
@@ -251,15 +282,22 @@
     const sel = new Set(state.selected);
     const passed = state.pool.filter(no => sel.has(no));
     if (passed.length === 0) {
-      await showAlert(t("noneSelectedAlert"));
+      await showAlert(tt("noneSelectedAlert"));
+      return;
+    }
+    // 2択ランキングモード：Step1で選んだ全員をそのまま2択へ
+    if (mode === "rank") {
+      if (!(await showConfirm(tt("toFinalConfirm", { count: passed.length, max: maxQuestions(passed.length) })))) return;
+      goFinal(passed);
+      render();
       return;
     }
     if (state.round > 0 && passed.length === state.pool.length && passed.length > N) {
-      await showAlert(t("allSelectedAlert", { n: N }));
+      await showAlert(tt("allSelectedAlert", { n: N }));
       return;
     }
     const vars = { round: roundLabel(state.round), count: passed.length, next: state.round + 1 };
-    if (!(await showConfirm(passed.length <= N ? t("toFinalConfirm", vars) : t("toNextRoundConfirm", vars)))) return;
+    if (!(await showConfirm(passed.length <= N ? tt("toFinalConfirm", vars) : tt("toNextRoundConfirm", vars)))) return;
     if (passed.length <= N) goFinal(passed);
     else goRound(state.round + 1, shuffle(passed));
     render();
@@ -268,13 +306,13 @@
   function renderFinalIntro() {
     const n = state.items.length;
     app.innerHTML = `
-      <h2>${t("finalIntroTitle", { count: n })}</h2>
+      <h2>${tt("finalIntroTitle", { count: n })}</h2>
       <div class="panel">
-        <p>${t("finalIntroText")}</p>
-        <p class="muted">${t("finalIntroNote", { max: maxQuestions(n) })}</p>
+        <p>${tt("finalIntroText")}</p>
+        <p class="muted">${tt("finalIntroNote", { max: maxQuestions(n) })}</p>
       </div>
       <div class="grid">${state.items.map(no => card(byNo.get(no), false)).join("")}</div>
-      <p><button class="btn primary" id="go">${t("finalStartButton")}</button></p>`;
+      <p><button class="btn primary" id="go">${tt("finalStartButton")}</button></p>`;
     app.querySelectorAll(".card").forEach(el => (el.disabled = true));
     app.querySelector("#go").onclick = () => { state.phase = "final"; save(); render(); };
   }
@@ -291,10 +329,10 @@
     // 左右の位置が偏らないように入れ替える
     const [left, right] = (state.answers.length + x) % 2 ? [y, x] : [x, y];
     app.innerHTML = `
-      <h2 class="center">${t("finalQuestionTitle", { q: state.answers.length + 1 })}</h2>
-      <p class="muted center">${t("finalQuestionSub", { max: maxQuestions(state.items.length) })}</p>
+      <h2 class="center">${tt("finalQuestionTitle", { q: state.answers.length + 1 })}</h2>
+      <p class="muted center">${tt("finalQuestionSub", { max: maxQuestions(state.items.length) })}</p>
       <div class="vs">${card(byNo.get(left), false)}${card(byNo.get(right), false)}</div>
-      <p class="center"><button class="btn small" id="undo" ${state.answers.length ? "" : "disabled"}>${t("undoButton")}</button></p>`;
+      <p class="center"><button class="btn small" id="undo" ${state.answers.length ? "" : "disabled"}>${tt("undoButton")}</button></p>`;
     app.querySelectorAll(".card").forEach(el => {
       el.onclick = () => {
         state.answers.push(Number(el.dataset.no) === x);
@@ -308,8 +346,8 @@
   function renderAdjust() {
     const o = state.order;
     app.innerHTML = `
-      <h2>${t("adjustTitle")}</h2>
-      <p class="muted">${t("adjustNote")}</p>
+      <h2>${tt("adjustTitle")}</h2>
+      <p class="muted">${tt("adjustNote")}</p>
       <ol class="adjust">${o.map((no, i) => {
         const p = byNo.get(no);
         return `<li>
@@ -321,8 +359,8 @@
         </li>`;
       }).join("")}</ol>
       <div class="actions">
-        <button class="btn" id="redo">${t("redoFinalButton")}</button>
-        <button class="btn primary" id="done">${t("decideButton")}</button>
+        <button class="btn" id="redo">${tt("redoFinalButton")}</button>
+        <button class="btn primary" id="done">${tt("decideButton")}</button>
       </div>`;
     const swap = (i, j) => {
       [o[i], o[j]] = [o[j], o[i]];
@@ -353,22 +391,24 @@
         : `<div class="cell empty"></div>`);
     }
     app.innerHTML = `
-      <h2 class="center">${t("resultTitle", { n: N })}</h2>
+      <h2 class="center">${tt("resultTitle", { n: N })}</h2>
       <div class="result">${cells.join("")}</div>
       <ol class="namelist">${o.map((no, i) => {
         const p = byNo.get(no);
-        return `<li><b>${t("resultRank", { rank: i + 1 })}</b>　${esc(p.name)}${p.group ? ` <span class="muted">（${esc(p.group)}）</span>` : ""}</li>`;
+        return `<li><b>${tt("resultRank", { rank: i + 1 })}</b>　${esc(p.name)}${p.group ? ` <span class="muted">（${esc(p.group)}）</span>` : ""}</li>`;
       }).join("")}</ol>
-      <div class="actions">
-        <a class="btn primary" href="collage.html?ids=${o.join(",")}" target="_blank" rel="noopener">${t("collageLink")}</a>
+      <div class="actions">${mode === "rank"
+        // 2択ランキングモードは 9・16・25選 の画像を選べる
+        ? [3, 4, 5].map(s => `<a class="btn ${s === 3 ? "primary" : ""}" href="collage.html?size=${s}&ids=${o.slice(0, s * s).join(",")}" target="_blank" rel="noopener">${tt("collageLink", { n: s * s })}</a>`).join("")
+        : `<a class="btn primary" href="collage.html?ids=${o.join(",")}" target="_blank" rel="noopener">${tt("collageLink")}</a>`}
       </div>
       <div class="actions">
-        <button class="btn small" id="adjust">${t("adjustButton")}</button>
-        <button class="btn small" id="restart">${t("restartButton")}</button>
+        <button class="btn small" id="adjust">${tt("adjustButton")}</button>
+        <button class="btn small" id="restart">${tt("restartButton")}</button>
       </div>`;
     app.querySelector("#adjust").onclick = () => { state.phase = "adjust"; save(); render(); };
     app.querySelector("#restart").onclick = async () => {
-      if (!(await showConfirm(t("resultRestartConfirm")))) return;
+      if (!(await showConfirm(tt("resultRestartConfirm")))) return;
       reset();
       render();
     };
