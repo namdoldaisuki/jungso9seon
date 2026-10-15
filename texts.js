@@ -16,7 +16,7 @@ window.TEXTS = {
   quickModeLabel: "忙しい人向け",
   quickModeDesc: "{n}人以下に絞ってから2択で順位を決めます（2択は最大20問ほど）",
   longModeLabel: "時間がある人向け",
-  longModeDesc: "選んだ人全員を2択でランキング。9・16・25選の画像が作れます",
+  longModeDesc: "選んだ人全員を2択でランキング。",
   topStartButton: "始める",
   topResumeNote: "途中から再開できます",
   backButton: "← 戻る",
@@ -95,7 +95,7 @@ window.TEXTS = {
     introSteps: [
       "<b>Step1</b>：気になる人をタップ（何人でもOK・スキップOK）",
       "<b>Step2</b>：選んだ人を2人ずつ比べて、好きな顔を選ぶと順位が決まります",
-      "<b>結果</b>：上位9人を3×3で発表！保存用の画像は9・16・25選から選べます",
+      "<b>結果</b>：上位9人発表！",
     ],
     introNote: "選んだ人数が多いほど2択の問題数が増えます（25人で最大約95問、50人で最大約240問）。",
     prelimHint: "ランキングに入れたい人をタップ（何人でもOK・スキップOK）",
@@ -103,7 +103,7 @@ window.TEXTS = {
     finalIntroTitle: "{count}人の順位を決めよう！",
     finalStartButton: "Step2スタート",
     finalQuestionTitle: "Step2　第{q}問",
-    resultTitle: "わたしの好き顔ランキング",
+    resultTitle: "中小ナムドル好き顔9選",
     collageLink: "{n}選の画像を開く",
   },
 };
