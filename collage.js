@@ -26,6 +26,8 @@
   const loadImage = src => new Promise(resolve => {
     if (!src) return resolve(null);
     const img = new Image();
+    // 写真が別の場所から来ても（下書きのプレビューなど）画像を作れるようにする
+    img.crossOrigin = "anonymous";
     img.onload = () => resolve(img);
     img.onerror = () => resolve(null);
     img.src = src;
@@ -50,7 +52,10 @@
     ctx.drawImage(img, (img.naturalWidth - s) / 2, (img.naturalHeight - s) / 2, s, s, x, y, TILE, TILE);
   });
 
-  const blob = await new Promise(r => canvas.toBlob(r, "image/jpeg", 0.92));
+  let blob = null;
+  try {
+    blob = await new Promise(r => canvas.toBlob(r, "image/jpeg", 0.92));
+  } catch (e) {} // 作れなかったときは下の「失敗しました」を出す
   if (!blob) {
     $("status").textContent = T.collageFailed;
     return;
