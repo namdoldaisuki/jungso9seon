@@ -534,5 +534,19 @@ window.ROSTER = [
   {"group":"","img":"7_画像6/535.jpg","name":"ジュニル","no":535},
   {"group":"","img":"7_画像6/536.jpg","name":"ハヌム","no":536},
   {"group":"","img":"7_画像6/537.jpg","name":"チョスンヨン","no":537},
-  {"group":"OnlyOneOf","img":"7_画像6/538.jpg","name":"LOVE","no":538}
+  {"group":"OnlyOneOf","img":"7_画像6/538.jpg","name":"LOVE","no":538},
+  {"group":"MONSTAX","img":"8_画像7/539.jpg","name":"ショヌ","no":539},
+  {"group":"MONSTAX","img":"8_画像7/540.jpg","name":"ミニョク","no":540},
+  {"group":"MONSTAX","img":"8_画像7/541.jpg","name":"キヒョン","no":541},
+  {"group":"MONSTAX","img":"8_画像7/542.jpg","name":"ヒョンウォン","no":542},
+  {"group":"MONSTAX","img":"8_画像7/543.jpg","name":"ジュホン","no":543},
+  {"group":"MONSTAX","img":"8_画像7/544.jpg","name":"I.M","no":544},
+  {"group":"MONSTAX","img":"8_画像7/545.jpg","name":"ウォノ","no":545},
+  {"group":"ASTRO","img":"8_画像7/546.jpg","name":"MJ","no":546},
+  {"group":"ASTRO","img":"8_画像7/547.jpg","name":"ジンジン","no":547},
+  {"group":"ASTRO","img":"8_画像7/548.jpg","name":"ウヌ","no":548},
+  {"group":"ASTRO","img":"8_画像7/549.jpg","name":"ムンビン","no":549},
+  {"group":"ASTRO","img":"8_画像7/550.jpg","name":"ラキ","no":550},
+  {"group":"ASTRO","img":"8_画像7/551.jpg","name":"サナ","no":551},
+  {"group":"","img":"8_画像7/552.jpg","name":"チョンセウン","no":552}
 ];
