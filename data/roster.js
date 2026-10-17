@@ -548,5 +548,8 @@ window.ROSTER = [
   {"group":"ASTRO","img":"8_画像7/549.jpg","name":"ムンビン","no":549},
   {"group":"ASTRO","img":"8_画像7/550.jpg","name":"ラキ","no":550},
   {"group":"ASTRO","img":"8_画像7/551.jpg","name":"サナ","no":551},
-  {"group":"","img":"8_画像7/552.jpg","name":"チョンセウン","no":552}
+  {"group":"","img":"8_画像7/552.jpg","name":"チョンセウン","no":552},
+  {"group":"VERIVERY","img":"8_画像7/553.jpg","name":"ホヨン","no":553},
+  {"group":"VERIVERY","img":"8_画像7/554.jpg","name":"ミンチャン","no":554},
+  {"group":"FANTASY BOYS","img":"8_画像7/555.jpg","name":"ソウル","no":555}
 ];
