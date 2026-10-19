@@ -551,5 +551,6 @@ window.ROSTER = [
   {"group":"","img":"8_画像7/552.jpg","name":"チョンセウン","no":552},
   {"group":"VERIVERY","img":"8_画像7/553.jpg","name":"ホヨン","no":553},
   {"group":"VERIVERY","img":"8_画像7/554.jpg","name":"ミンチャン","no":554},
-  {"group":"FANTASY BOYS","img":"8_画像7/555.jpg","name":"ソウル","no":555}
+  {"group":"FANTASY BOYS","img":"8_画像7/555.jpg","name":"ソウル","no":555},
+  {"group":"SF9","img":"8_画像7/556.jpg","name":"ロウン","no":556}
 ];
